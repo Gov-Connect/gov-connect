@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	//likely will switch to Gin or more direct net/http
 	r := router.Router()
 	// fs := http.FileServer(http.Dir("build"))
 	// http.Handle("/", fs)
