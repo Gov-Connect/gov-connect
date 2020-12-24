@@ -22,9 +22,10 @@ import (
 
 // collection object/instance
 var (
-	collection *mongo.Collection
-	repMap     = make(map[string]models.Representative)
-	userReps   = make(map[string][]string)
+	collection  *mongo.Collection
+	repMap      = make(map[string]models.Representative)
+	userReps    = make(map[string][]string)
+	tempRepList []models.Representative
 )
 
 // create connection with mongo db
@@ -128,11 +129,22 @@ func loadRepDB() map[string]models.Representative {
 }
 
 func addRepToMap(rep *models.Representative) models.Representative {
-	return models.Representative{rep.GUID, rep.Office, rep.Name, rep.LastName, rep.Location, rep.Division,
-		rep.GovWebsite, rep.Twitter, rep.TotalVotes, rep.MissedVotes, rep.PresentVotes,
-		math.Round(10000*float64(rep.MissedVotes)/float64(rep.TotalVotes)) / 100,
-		math.Round(10000*float64(rep.PresentVotes)/float64(rep.TotalVotes)) / 100,
-		rep.PercentVotesWithParty}
+	return models.Representative{
+		GUID:                  rep.GUID,
+		Office:                rep.Office,
+		Name:                  rep.Name,
+		LastName:              rep.LastName,
+		Location:              rep.Location,
+		Division:              rep.Division,
+		GovWebsite:            rep.GovWebsite,
+		Twitter:               rep.Twitter,
+		TotalVotes:            rep.TotalVotes,
+		MissedVotes:           rep.MissedVotes,
+		PresentVotes:          rep.PresentVotes,
+		PercentMissedVotes:    math.Round(10000*float64(rep.MissedVotes)/float64(rep.TotalVotes)) / 100,
+		PercentPresentVotes:   math.Round(10000*float64(rep.PresentVotes)/float64(rep.TotalVotes)) / 100,
+		PercentVotesWithParty: rep.PercentVotesWithParty,
+	}
 }
 
 // LocalRepsHandler loads user information and is called on website homepage
@@ -143,11 +155,92 @@ func LocalRepsHandler(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
 	var tempUserRepList []models.Representative
 	for _, j := range userReps[userGUID] {
-		fmt.Println("j", j)
-		fmt.Println("Rep: ", repMap[j].Name)
+		// fmt.Println("j", j)
+		// fmt.Println("Rep: ", repMap[j].Name)
 		tempUserRepList = append(tempUserRepList, repMap[j])
 	}
 	msg := map[string]interface{}{"Status": "Ok", "user_guid": userGUID, "users_rep_list": tempUserRepList}
+	c.JSON(http.StatusOK, msg)
+}
+
+// EditLocalRep adds or removes a local rep in a user's feed
+func EditLocalRep(c *gin.Context) {
+	userGUID, _ := c.GetQuery("user_guid")
+	repGUID, _ := c.GetQuery("rep_guid")
+	editTask, _ := c.GetQuery("editTask")
+	c.Header("Content-Type", "application/json")
+	targetRepIndex := -1
+	if editTask == "add" {
+		// TODO: create map of maps
+		userReps[userGUID] = append(userReps[userGUID], repGUID)
+	} else if editTask == "remove" {
+		tempUserRepList := userReps[userGUID]
+		for i, value := range tempUserRepList {
+			if value == repGUID {
+				targetRepIndex = i
+			}
+		}
+		if targetRepIndex != -1 {
+			userReps[userGUID] = append(tempUserRepList[:targetRepIndex], tempUserRepList[targetRepIndex+1:]...)
+		}
+	} else {
+		fmt.Println("edit Rep: provided invalid option")
+		// log.Info("edit Rep: provided invalid option")
+	}
+
+	userRepUpdate := models.UserRepUpdate{
+		UserGUID: userGUID,
+		RepGUID:  repGUID,
+		Action:   editTask,
+	}
+
+	userRepUpdateResponse, _ := json.Marshal(userRepUpdate)
+
+	fmt.Println(string(userRepUpdateResponse))
+
+	// if enableKafka {
+	// 	err := writer.WriteMessages(context.Background(), kafka.Message{
+	// 		//Key: []byte(repGUID),
+	// 		Value: []byte(userRepUpdateResponse),
+	// 	})
+	// 	if err != nil {
+	// 		panic("could not write message " + err.Error())
+	// 	}
+	// }
+
+	msg := map[string]interface{}{"Status": "Ok", "user_guid": userGUID, "users_rep_list": userReps[userGUID]}
+	c.JSON(http.StatusOK, msg)
+}
+
+// GetTopReps pulls in the trending representatives for a user to select
+func GetTopReps(c *gin.Context) {
+	reps := []*models.Representative{}
+
+	in, err := os.Open("./test_data/top_house_reps.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer in.Close()
+	if err := gocsv.UnmarshalFile(in, &reps); err != nil {
+		panic(err)
+	}
+	for _, rep := range reps {
+		tempRepList = append(tempRepList, addRepToMap(rep))
+	}
+
+	in, err = os.Open("./test_data/top_senate_reps.csv")
+	if err != nil {
+		panic(err)
+	}
+	defer in.Close()
+	if err := gocsv.UnmarshalFile(in, &reps); err != nil {
+		panic(err)
+	}
+	for _, rep := range reps {
+		tempRepList = append(tempRepList, addRepToMap(rep))
+	}
+
+	msg := map[string]interface{}{"Status": "Ok", "users_rep_list": tempRepList}
 	c.JSON(http.StatusOK, msg)
 }
 

@@ -35,15 +35,19 @@ func Router() *gin.Engine {
 
 	// Setup route group for the API
 	api := r.Group("/api")
-	{
-		api.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "pong",
-			})
-		})
-	}
 
-	api.GET("/localreps", middleware.LocalRepsHandler)
+	api.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
+
+	// new apis
+	api.GET("/local-reps", middleware.LocalRepsHandler)
+	api.POST("/local-reps/edit", middleware.EditLocalRep)
+	api.GET("/top-reps", middleware.GetTopReps)
+
+	// old apis
 	api.GET("/task", middleware.GetAllTask)
 	api.POST("/task", middleware.CreateTask)
 	api.PUT("/task/:id", middleware.TaskComplete)
