@@ -21,6 +21,7 @@ type Representative struct {
 	Division              string  `json:"division" csv:"ocd_id"`
 	GovWebsite            string  `json:"gov_web" csv:"url"`
 	Twitter               string  `json:"twitter" csv:"twitter_account"`
+	PhotoURL              string  `json:"photo_url" csv:"photo_url"`
 	TotalVotes            int     `json:"total_votes" csv:"total_votes"`
 	MissedVotes           int     `json:"missed_votes" csv:"missed_votes"`
 	PresentVotes          int     `json:"present_votes" csv:"present_votes"`
