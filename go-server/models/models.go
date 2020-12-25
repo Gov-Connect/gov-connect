@@ -34,3 +34,10 @@ type UserRepMap struct {
 	UserGUID string `csv:"user_guid"`
 	RepGUID  string `csv:"rep_guid"`
 }
+
+//UserRepUpdate is the json response sent to kafka
+type UserRepUpdate struct {
+	UserGUID string
+	RepGUID  string
+	Action   string
+}
