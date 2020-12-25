@@ -2,6 +2,7 @@ package router
 
 import (
 	"go-server/middleware"
+	searchengine "go-server/search_engine"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -46,6 +47,7 @@ func Router() *gin.Engine {
 	api.GET("/local-reps", middleware.LocalRepsHandler)
 	api.POST("/local-reps/edit", middleware.EditLocalRep)
 	api.GET("/top-reps", middleware.GetTopReps)
+	api.GET("/search", searchengine.ExecuteSearch)
 
 	// old apis
 	api.GET("/task", middleware.GetAllTask)
