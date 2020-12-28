@@ -1,0 +1,35 @@
+name: Lint
+
+on: push
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+    # - name: Set up Go
+    #     uses: actions/setup-node@v1
+    #     with:
+    #       node-version: 12
+
+      # Prettier must be in `package.json`
+      - name: Install Node.js dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable linters
+          prettier: true
