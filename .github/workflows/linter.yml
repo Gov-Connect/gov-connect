@@ -16,10 +16,10 @@ jobs:
         with:
           node-version: 12
 
-    # - name: Set up Go
-    #     uses: actions/setup-node@v1
-    #     with:
-    #       node-version: 12
+      # - name: Set up Go
+      #   uses: actions/setup-go@v2
+      #   with:
+      #     go-version: '^1.13.1'
 
       # Prettier must be in `package.json`
       - name: Install Node.js dependencies
@@ -27,9 +27,9 @@ jobs:
           cd client
           npm install
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v1
+      - name: Prettify code
+        uses: creyD/prettier_action@v3.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Enable linters
-          prettier: true
+          # This part is also where you can pass other options, for example:
+          prettier_options: --write **/*.{js,ts,jsx,tsx,md}
+          only_changed: True
