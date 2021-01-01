@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { Container } from "semantic-ui-react";
-import LogInHome from './components/LogInHome';
+import LogInHome from "./components/LogInHome";
 
 function App() {
   return (
