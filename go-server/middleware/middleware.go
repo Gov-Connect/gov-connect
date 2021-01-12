@@ -137,6 +137,7 @@ func addRepToMap(rep *models.Representative) models.Representative {
 		Location:              rep.Location,
 		Division:              rep.Division,
 		GovWebsite:            rep.GovWebsite,
+		PhotoURL:              rep.PhotoURL,
 		Twitter:               rep.Twitter,
 		TotalVotes:            rep.TotalVotes,
 		MissedVotes:           rep.MissedVotes,
