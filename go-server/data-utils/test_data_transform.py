@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import os
 
+serverPath = "./go-server/"
+
 ## Create file load in function
 def AddPhotoURL(fileName):
     ## load in test csv files as dataframes
@@ -14,12 +16,12 @@ def AddPhotoURL(fileName):
         fileContent.loc[i,"photo_url"] = photo_url
 
     ## save out file 
-    filePath = "../test_data/" + fileName
+    filePath = serverPath + "/test_data/" + fileName
     fileContent.to_csv(filePath, index=False)
     print("Adding Photo URL to " + file)
 
 ## pull all files in the 'test_data' dir and execute function
-TargetFolder = "../test_data"
+TargetFolder = serverPath + "/test_data"
 for file in os.listdir(TargetFolder):
     if file != "user_favorite_reps.csv":
         AddPhotoURL(file)

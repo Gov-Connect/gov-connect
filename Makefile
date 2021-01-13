@@ -1,12 +1,17 @@
 .PHONY: all
 
-all: clean run
+all: clean dataprep run
 
 .PHONY: clean
 
 clean:
 	@echo "[✔️] Clean complete!"
 
+.PHONY: dataprep
+
+dataprep:
+	@python3 ./go-server/data-utils/test_data_transform.py
+	@echo "[✔️] Data preparation steps complete"
 .PHONY: run
 
 run:
