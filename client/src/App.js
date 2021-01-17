@@ -1,13 +1,13 @@
 import React from "react";
 import "./App.css";
 import { Container } from "semantic-ui-react";
-import ToDoList from "./To-Do-List";
+import LogInHome from "./components/LogInHome";
 
 function App() {
   return (
     <div>
       <Container>
-        <ToDoList />
+        <LogInHome />
       </Container>
     </div>
   );
