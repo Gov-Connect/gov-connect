@@ -23,7 +23,7 @@ import (
 // collection object/instance
 var (
 	collection  *mongo.Collection
-	repMap      = make(map[string]models.Representative)
+	RepMap      = make(map[string]models.Representative)
 	userReps    = make(map[string][]string)
 	tempRepList []models.Representative
 )
@@ -109,7 +109,7 @@ func loadRepDB() map[string]models.Representative {
 	}
 	for _, rep := range reps {
 		// fmt.Println(rep.LastName)
-		repMap[rep.GUID] = addRepToMap(rep)
+		RepMap[rep.GUID] = addRepToMap(rep)
 	}
 
 	in, err = os.Open("./test_data/senate_members.csv")
@@ -122,10 +122,10 @@ func loadRepDB() map[string]models.Representative {
 	}
 	for _, rep := range reps {
 		// fmt.Println(rep.LastName)
-		repMap[rep.GUID] = addRepToMap(rep)
+		RepMap[rep.GUID] = addRepToMap(rep)
 	}
 
-	return repMap
+	return RepMap
 }
 
 func addRepToMap(rep *models.Representative) models.Representative {
@@ -137,6 +137,7 @@ func addRepToMap(rep *models.Representative) models.Representative {
 		Location:              rep.Location,
 		Division:              rep.Division,
 		GovWebsite:            rep.GovWebsite,
+		PhotoURL:              rep.PhotoURL,
 		Twitter:               rep.Twitter,
 		TotalVotes:            rep.TotalVotes,
 		MissedVotes:           rep.MissedVotes,
@@ -157,7 +158,7 @@ func LocalRepsHandler(c *gin.Context) {
 	for _, j := range userReps[userGUID] {
 		// fmt.Println("j", j)
 		// fmt.Println("Rep: ", repMap[j].Name)
-		tempUserRepList = append(tempUserRepList, repMap[j])
+		tempUserRepList = append(tempUserRepList, RepMap[j])
 	}
 	msg := map[string]interface{}{"Status": "Ok", "user_guid": userGUID, "users_rep_list": tempUserRepList}
 	c.JSON(http.StatusOK, msg)

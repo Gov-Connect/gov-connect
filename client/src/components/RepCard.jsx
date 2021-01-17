@@ -9,6 +9,7 @@ class RepCard extends Component {
   render() {
     const { localRep } = this.props;
 
+
     const footer = (
       <a>
         <Icon
