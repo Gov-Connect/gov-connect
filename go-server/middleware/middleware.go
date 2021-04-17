@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
 	"github.com/joho/godotenv"
+	"github.com/segmentio/kafka-go"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,6 +27,7 @@ var (
 	RepMap      = make(map[string]models.Representative)
 	userReps    = make(map[string][]string)
 	tempRepList []models.Representative
+	writer      *kafka.Writer
 )
 
 // create connection with mongo db
@@ -33,6 +35,7 @@ func init() {
 	loadTheEnv()
 	createDBInstance()
 	loadRepDB()
+	startKafka()
 }
 
 func loadTheEnv() {
@@ -79,6 +82,22 @@ func createDBInstance() {
 }
 
 // New Functions
+
+func startKafka() {
+
+	if cfg.Kafka.EnableKafka {
+		fmt.Println("Starting kafka producer...")
+		// log.Info("Starting kafka producer...")
+		writer = kafka.NewWriter(kafka.WriterConfig{
+			Brokers: []string{cfg.Kafka.BrokerAddress},
+			Topic:   cfg.Kafka.Topic,
+		})
+		fmt.Println("Kafka broker started!")
+	}
+
+	fmt.Println(cfg.Kafka)
+
+}
 
 func loadRepDB() map[string]models.Representative {
 
@@ -199,15 +218,15 @@ func EditLocalRep(c *gin.Context) {
 
 	fmt.Println(string(userRepUpdateResponse))
 
-	// if enableKafka {
-	// 	err := writer.WriteMessages(context.Background(), kafka.Message{
-	// 		//Key: []byte(repGUID),
-	// 		Value: []byte(userRepUpdateResponse),
-	// 	})
-	// 	if err != nil {
-	// 		panic("could not write message " + err.Error())
-	// 	}
-	// }
+	if cfg.Kafka.EnableKafka {
+		err := writer.WriteMessages(context.Background(), kafka.Message{
+			//Key: []byte(repGUID),
+			Value: []byte(userRepUpdateResponse),
+		})
+		if err != nil {
+			panic("could not write kafka message " + err.Error())
+		}
+	}
 
 	msg := map[string]interface{}{"Status": "Ok", "user_guid": userGUID, "users_rep_list": userReps[userGUID]}
 	c.JSON(http.StatusOK, msg)

@@ -1,0 +1,5 @@
+kafka:
+  kafka.topic: "test"
+  kafka.brokerAddress: "localhost:9092"
+  kafka.enable: false
+  

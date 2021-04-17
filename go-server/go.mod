@@ -9,6 +9,8 @@ require (
 	github.com/gocarina/gocsv v0.0.0-20201208093247-67c824bc04d4
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.3.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/segmentio/kafka-go v0.4.8
 	go.mongodb.org/mongo-driver v1.4.4
+	gopkg.in/yaml.v2 v2.3.0
 )

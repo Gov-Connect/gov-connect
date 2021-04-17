@@ -29,3 +29,8 @@ yarn-error.log*
 
 # search engine
 go-server/riot-index/*
+
+# keys
+go-server/keys
+
+*trash*

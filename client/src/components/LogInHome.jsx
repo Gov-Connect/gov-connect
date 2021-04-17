@@ -52,6 +52,7 @@ class LogInHome extends Component {
 
   render() {
     const userList = this.state.reps;
+    console.log("Rendering Container")
     return (
       <div className="container">
         <br />
