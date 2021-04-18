@@ -32,8 +32,8 @@ var (
 
 // create connection with mongo db
 func init() {
-	loadTheEnv()
-	createDBInstance()
+	//loadTheEnv()
+	//createDBInstance()
 	loadRepDB()
 	startKafka()
 }

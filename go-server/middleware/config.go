@@ -29,7 +29,6 @@ type Config struct {
 func init() {
 	readYAML(&cfg)
 	readKeys(&cfg)
-	// readEnv(&cfg)
 }
 
 func readYAML(cfg *Config) {
@@ -54,5 +53,6 @@ func readKeys(cfg *Config) {
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
 	decoder.Decode(cfg)
+	fmt.Println("Printing Keys")
 	fmt.Println(cfg.Keys)
 }

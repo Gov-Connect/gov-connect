@@ -11,14 +11,13 @@ class RepCard extends Component {
 
 
     const footer = (
-      <a>
+      <button onClick={() => this.deleteRep(localRep.guid)}>
         <Icon
           name="delete"
           color="red"
-          onClick={() => this.deleteRep(localRep.guid)}
         />
         Delete Rep
-      </a>
+      </button>
     );
 
     const description = (

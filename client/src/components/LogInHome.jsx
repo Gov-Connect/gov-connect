@@ -3,7 +3,7 @@ import axios from "axios";
 import RepCard from "./RepCard";
 import { CardGroup } from "semantic-ui-react";
 
-let endpoint = "http://localhost:8080";
+let endpoint = "http://192.168.0.25:8080";
 
 class LogInHome extends Component {
   constructor(props) {
@@ -32,14 +32,15 @@ class LogInHome extends Component {
 
   handleDelete = (guid) => {
     // TODO: We'll need to test this endpoint, but one step at a time
-    // axios.delete(endpoint + `/api/localreps/edit?editTask=remove&user_guid=55ee03f2dcd8c8e46b91cbb2e70d9e&rep_guid=${guid}`, {
-    //   headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //   },
-    // })
-    // .then((res) => {
-    //     return res;
-    // });
+    console.log("Delete Rep")
+    axios.post(endpoint + `/api/local-reps/edit?editTask=remove&user_guid=55ee03f2dcd8c8e46b91cbb2e70d9e&rep_guid=${guid}`, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    })
+    .then((res) => {
+        return res;
+    });
     const updatedReps = this.state.reps.filter((rep) => rep.guid !== guid);
     this.setState({
       reps: updatedReps,
